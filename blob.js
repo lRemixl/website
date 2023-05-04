@@ -1,10 +1,47 @@
 const blobs = [];
 var canvas;
+
 var mouseHeld = false;
 let character;
 window.current_height = 270;
 const bullets = [];
+const enemyBullets = [];
+const spaceInvaders = [];
+const gameState = {
+  BLOBS: 0,
+  SPACE_INVADERS: 1,
+};
+let currentState = gameState.BLOBS;
+let playerLives = 3;
+let level = 1;
+let enemySpeed = 1;
+let enemyDirection = 1;
+let enemyMoveDown = false;
 
+class SpaceInvader {
+  constructor(x, y) {
+    this.pos = createVector(x, y);
+    this.size = 30;
+    this.color = color(0, 255, 0);
+    this.canShoot = true;
+
+  }
+
+  display() {
+    fill(this.color);
+    rect(this.pos.x, this.pos.y, this.size, this.size);
+  }
+  shoot() {
+    if (this.canShoot) {
+      const bulletSpeed = 5;
+      enemyBullets.push(new Bullet(this.pos.x + this.size / 2, this.pos.y + this.size, createVector(0, bulletSpeed)));
+      this.canShoot = false;
+      setTimeout(() => {
+        this.canShoot = true;
+      }, random(1000, 5000));
+    }
+ }
+}
 class Bullet {
   constructor(x, y, vel) {
     this.pos = createVector(x, y);
@@ -48,6 +85,11 @@ function setup() {
     blobs.push(new Blob(random(width), random(height), random(20, 50)));
   }
   character = new Character(width / 2, height / 2, 20);
+  for (let i = 0; i < 5; i++) {
+    for (let j = 0; j < 11; j++) {
+      spaceInvaders.push(new SpaceInvader(j * 50 + 50, i * 50 + 50));
+    }
+  }
 }
 document.addEventListener('keydown', (event) => {
   
@@ -58,24 +100,66 @@ document.addEventListener('keydown', (event) => {
 });
 function draw() {
   background(0);
-
+  if (currentState === gameState.SPACE_INVADERS && spaceInvaders.length === 0) {
+    level += 1;
+  spawnSpaceInvaders(level, 11);
+    }
+  if (currentState === gameState.BLOBS && blobs.length === 0) {
+    currentState = gameState.SPACE_INVADERS;
+  }
   for (let blob of blobs) {
     blob.update();
     blob.display();
     blob.checkEdges(window.current_height);
     blob.checkCollision(blobs);
   }
+  if(currentState === gameState.BLOBS){
   if (mouseHeld) {
     for (let i = blobs.length - 1; i >= 0; i--) {
       if (blobs[i].isClicked(mouseX, mouseY)) {
         let newBlobs = blobs[i].split();
         blobs.splice(i, 1);
         blobs.push(...newBlobs);
-        break;
+        break;  
       }
     }
+   }
   }
+  else if (currentState === gameState.SPACE_INVADERS){
+    for (const invader of spaceInvaders) {
+      invader.display();
+    }
+    let moveDown = false;
+    for (const invader of spaceInvaders) {
+      invader.pos.x += enemySpeed * enemyDirection;
+      if (invader.pos.x <= 0 || invader.pos.x + invader.size >= width) {
+        moveDown = true;
+      }
+    }
+    if (moveDown) {
+      enemyDirection *= -1;
+      for (const invader of spaceInvaders) {
+        invader.shoot();
+        invader.pos.y += invader.size / 2;
+        if (invader.pos.y + invader.size >= character.pos.y) {
+          // Game over if the enemies reach the player
+          currentState = gameState.GAME_OVER;
+        }
+      }
+    }
+  
+  }
+  // Finally, replace the existing GAME_OVER state with the following
+const GAME_OVER = 2;
+if (currentState === gameState.GAME_OVER) {
+textSize(32);
+fill(255);
+textAlign(CENTER, CENTER);
+text("Game Over", width / 2, height / 2);
+}
   character.display();
+  
+
 
   const speed = 5;
   if (keyIsDown(LEFT_ARROW)) {
@@ -104,16 +188,7 @@ function draw() {
   }
 
   // Check for collisions between the character and the blobs
-  for (let i = blobs.length - 1; i >= 0; i--) {
-    if (characterCollidesWithBlob(character, blobs[i])) {
-      let newBlobs = blobs[i].split();
-      blobs.splice(i, 1);
-      // Only add new blobs if there are less than 250 blobs
-      if (blobs.length + newBlobs.length <= 250) {
-        blobs.push(...newBlobs);
-      }
-    }
-  }
+  
   for (let i = blobs.length - 1; i >= 0; i--) {
     for (let j = bullets.length - 1; j >= 0; j--) {
       if (bulletHitsBlob(bullets[j], blobs[i])) {
@@ -130,12 +205,78 @@ function draw() {
     if (bullets[i].offScreen()) {
       bullets.splice(i, 1);
     }
+    if (currentState === gameState.SPACE_INVADERS) {
+      for (let j = spaceInvaders.length - 1; j >= 0; j--) {
+        if (bulletHitsSpaceInvader(bullets[i], spaceInvaders[j])) {
+          spaceInvaders.splice(j, 1);
+          bullets.splice(i, 1);
+          break;
+        }
+      }
+    }
   }
+  for (let i = enemyBullets.length - 1; i >= 0; i--) {
+    enemyBullets[i].update();
+    enemyBullets[i].display();
 
+    // Check for collisions between the character and the enemy bullets
+    if (characterCollidesWithBullet(character, enemyBullets[i])) {
+      playerLives -= 1;
+      if (playerLives <= 0) {
+        // Game over if the player is hit 3 times
+        currentState = gameState.GAME_OVER;
+      }
+      enemyBullets.splice(i, 1);
+    } else if (enemyBullets[i].offScreen()) {
+      enemyBullets.splice(i, 1);
+    }
+  }
 }
-function bulletHitsBlob(bullet, blob) {
-  return dist(bullet.pos.x, bullet.pos.y, blob.pos.x, blob.pos.y) <= (blob.size / 2) + (bullet.size / 2);
-}
+function characterCollidesWithBullet(character, bullet) {
+  return (
+    character.pos.x + character.size > bullet.pos.x - bullet.size / 2 &&
+    character.pos.x < bullet.pos.x + bullet.size / 2 &&
+    character.pos.y + character.size > bullet.pos.y - bullet.size / 2 &&
+    character.pos.y < bullet.pos.y + bullet.size / 2
+    );
+    }
+    // Add a new function to handle the start of a new level
+function startNewLevel() {
+  level += 1;
+  enemySpeed = 1 + level * 0.5;
+  enemyDirection = 1;
+  spaceInvaders.length = 0;
+  for (let i = 0; i < 5; i++) {
+  for (let j = 0; j < 11; j++) {
+  spaceInvaders.push(new SpaceInvader(j * 50 + 50, i * 50 + 50));
+  }
+  }
+  }
+  function spawnSpaceInvaders(rows, cols) {
+     let  spaceInvaders = [];
+    for (let i = 0; i < rows; i++) {
+      for (let j = 0; j < cols; j++) {
+        spaceInvaders.push(new SpaceInvader(j * 50 + 50, i * 50 + 50));
+      }
+    }
+  }
+  
+
+
+  function bulletHitsBlob(bullet, blob) {
+    for (let i = spaceInvaders.length - 1; i >= 0; i--) {
+    if (
+    bullet.pos.x + bullet.size / 2 > spaceInvaders[i].pos.x &&
+    bullet.pos.x - bullet.size / 2 < spaceInvaders[i].pos.x + spaceInvaders[i].size &&
+    bullet.pos.y + bullet.size / 2 > spaceInvaders[i].pos.y &&
+    bullet.pos.y - bullet.size / 2 < spaceInvaders[i].pos.y + spaceInvaders[i].size
+    ) {
+    spaceInvaders.splice(i, 1);
+    return true;
+    }
+    }
+    return dist(bullet.pos.x, bullet.pos.y, blob.pos.x, blob.pos.y) <= (blob.size / 2) + (bullet.size / 2);
+    }
 function characterCollidesWithBlob(character, blob) {
   return (
     character.pos.x + character.size > blob.pos.x - blob.size / 2 &&
@@ -147,7 +288,16 @@ function characterCollidesWithBlob(character, blob) {
 function mousePressed() {
   mouseHeld = true;
 }
-
+function bulletHitsSpaceInvader(bullet, spaceInvader) {
+  if (bullet && spaceInvader) {
+    let d = dist(bullet.pos.x, bullet.pos.y, spaceInvader.pos.x, spaceInvader.pos.y);
+    if (d < bullet.size / 2 + spaceInvader.size / 2) {
+      return true;
+    }
+  }
+  return false;
+}
+ 
 function mouseReleased() {
   mouseHeld = false;
 }
