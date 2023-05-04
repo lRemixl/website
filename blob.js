@@ -92,7 +92,7 @@ function draw() {
   }
   if (keyIsDown(32)){
     const bulletSpeed = 10;
-    if(bullets.length < 10){
+    if(bullets.length < 400){
 
     bullets.push(new Bullet(character.pos.x + character.size / 2, character.pos.y, createVector(0, -bulletSpeed))); // Up
     bullets.push(new Bullet(character.pos.x + character.size / 2, character.pos.y, createVector(0, bulletSpeed))); // Down
