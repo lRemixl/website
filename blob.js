@@ -235,6 +235,10 @@ class Blob {
           let v2New = p5.Vector.add(v2, p5.Vector.mult(p5.Vector.sub(this.pos, other.pos).normalize(), v2pNew - v2p));
 
           // Set the velocities of the two blobs to their new velocities
+          console.log('v1pNew:', v1pNew);
+        console.log('v2pNew:', v2pNew);
+        console.log('v1New:', v1New);
+        console.log('v2New:', v2New);
           this.vel = v1New;
           other.vel = v2New;
 
