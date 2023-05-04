@@ -225,8 +225,10 @@ class Blob {
           let v2p = v2.dot(p5.Vector.sub(other.pos, this.pos).normalize());
 
           // Calculate the new velocities of the two blobs after the collision
-          let v1pNew = ((m1 - m2) * v1p + 2 * m2 * v2p) / (m1 + m2);
-          let v2pNew = ((m2 - m1) * v2p + 2 * m1 * v1p) / (m1 + m2);
+          let v1pNew = (m1 * v1p + m2 * (2 * v2p - v1p)) / (m1 + m2);
+
+          let v2pNew = (m2 * v2p + m1 * (2 * v1p - v2p)) / (m1 + m2);
+
 
           // Calculate the new total velocities of the two blobs
           let v1New = p5.Vector.add(v1, p5.Vector.mult(p5.Vector.sub(other.pos, this.pos).normalize(), v1pNew - v1p));
