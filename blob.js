@@ -226,9 +226,8 @@ class Blob {
 
           // Calculate the new velocities of the two blobs after the collision
           const epsilon = 0.0001; // Small constant to avoid division by zero or very small numbers
-
-let v1pNew = (m1 * v1p + m2 * (2 * v2p - v1p)) / (m1 + m2 + epsilon);
-let v2pNew = (m2 * v2p + m1 * (2 * v1p - v2p)) / (m1 + m2 + epsilon);
+          let v1pNew = (m1 * v1p + m2 * (2 * v2p - v1p)) / (m1 + m2 + epsilon);
+          let v2pNew = (m2 * v2p + m1 * (2 * v1p - v2p)) / (m1 + m2 + epsilon);
 
 
 
@@ -240,7 +239,13 @@ let v2pNew = (m2 * v2p + m1 * (2 * v1p - v2p)) / (m1 + m2 + epsilon);
           
           this.vel = v1New;
           other.vel = v2New;
-
+          const maxVelocity = 10;
+      if (this.vel.mag() > maxVelocity) {
+        this.vel.setMag(maxVelocity);
+      }
+      if (other.vel.mag() > maxVelocity) {
+        other.vel.setMag(maxVelocity);
+      }
           // Move the blobs apart along the collision normal
           let overlap = (minDist - d) / 2;
           let moveVec = p5.Vector.sub(this.pos, other.pos).normalize().mult(overlap);
