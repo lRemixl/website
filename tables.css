@@ -1,0 +1,127 @@
+body {
+    background-color: black;
+    font-family: Arial, sans-serif;
+    color: white;
+  }
+  
+  h1 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .table-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
+
+  .table-wrapper {
+    background-color: #222;
+    border-radius: 8px;
+    padding: 20px;
+    width: 300px;
+  }
+
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .arrow,
+  .delete-table {
+    cursor: pointer;
+    margin-right: 10px;
+  }
+
+  .table-name {
+    background-color: #333;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    font-size: 16px;
+    padding: 4px 8px;
+    width: 100%;
+  }
+
+  .table-name:focus {
+    outline: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  th,
+  td {
+    border: 1px solid #444;
+    padding: 8px;
+    text-align: left;
+  }
+
+  th {
+    background-color: #555;
+    color: white;
+  }
+
+  input[type="text"],
+input[type="checkbox"],
+textarea {
+  background-color: #333;
+  border: none;
+  color: white;
+  margin: 0;
+  padding: 4px 8px;
+}
+
+input[type="text"]:focus,
+textarea:focus {
+  outline: none;
+}
+
+textarea {
+  height: auto;
+  resize: vertical; /* Allow vertical resizing only */
+  width: 90%;
+  overflow: hidden;
+
+}
+
+
+  .add-row-button {
+    background-color: #4caf50;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    display: block;
+    font-size: 16px;
+    margin-top: 10px;
+    padding: 6px 12px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .add-row-button:hover {
+    background-color: #45a049;
+  }
+
+  button {
+    background-color: #4caf50;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-size: 16px;
+    margin: 10px;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+  }
+
+  button:hover {
+    background-color: #45a049;
+  }

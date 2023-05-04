@@ -7,7 +7,8 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Raleway:wght@400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/filesaver@2.0.0/FileSaver.min.js"></script>
 
     <style>
       body {
@@ -107,6 +108,11 @@
   top: 210px;
   left: 10px;
    color: #3cb371;
+}
+.table-link {
+  top: 250px;
+  left: 10px;
+   color: #085ddd;
 }
 .meta-link {
   align-items: center;
@@ -359,6 +365,39 @@ header .company-name {
   100% {transform: translate(0px, 0px) rotate(0deg);}
 
 }
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1rem;
+}
+
+th,
+td {
+  border: 1px solid #000;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+th {
+  font-weight: bold;
+}
+
+button {
+  background-color: #4CAF50;
+  border: none;
+  color: white;
+  padding: 0.5rem 1rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 1rem;
+  margin: 0.5rem 0;
+  cursor: pointer;
+}
+
+input[type="file"] {
+  display: none;
+}
 @keyframes backColourRotate {
     from {
         background: linear-gradient(90deg, #ff7575 0%, #ff9875 4%, #ffba75 8%, #ffdd75 12%, #ffff75 16%, #ddff75 20%, #baff75 24%, #98ff75 28%, #75ff75 32%, #75ff98 36%, #75ffba 40%, #75ffdd 44%, #75ffff 48%, #75ddff 52%, #75baff 56%, #7598ff 60%, #7575ff 64%, #9875ff 68%, #ba75ff 72%, #dd75ff 76%, #ff75ff 80%, #ff75dd 84%, #ff75ba 88%, #ff7598 92%, #ff7575 96%);
@@ -588,6 +627,7 @@ header .company-name {
      <a href="#" onclick="event.preventDefault(); scrollToSubject('physics')" class="navigation-link physics-link">Physics</a>
      <a href="#" onclick="event.preventDefault(); scrollToSubject('spanish')" class="navigation-link spanish-link">Spanish</a>
      <a href="#" onclick="event.preventDefault(); scrollToSubject('economics')" class="navigation-link economics-link">Economics</a>
+     <a href="#" onclick="window.location.href='tables.html'" class="navigation-link table-link">Table</a>
      
     <div class="container">
         <div class="subject active" id="maths">
@@ -658,7 +698,9 @@ header .company-name {
               </div>
             <a href="https://www.savemyexams.co.uk/a-level/economics/aqa/-/pages/past-papers/" target="_blank">Exam Practice</a>
         </div>
+
     </div>
+    
     <div id="image-track" data-mouse-down-at="0" data-prev-percentage="0">
         <!-- Add the provided image track HTML here -->
         <img class="image" src="tesco.gif" draggable="false" />
@@ -670,6 +712,7 @@ header .company-name {
 
 
     </div>
+
     <div id="sellout">
 
   </div>
@@ -678,6 +721,9 @@ header .company-name {
      <div class="slider-container">
       <input type="range" min="1" max="3" value="1" class="slider" id="sectionSlider">
     </div>
+
+  
+    <script src="table.js"></script> 
     <script src="blob.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", () => {
@@ -685,14 +731,17 @@ header .company-name {
         const sectionSlider = document.querySelector("#sectionSlider");
         sectionSlider.setAttribute("max", subjects.length);
       
+        // Get the table container in the new tables section
+        const tableContainer = document.querySelector("#tables-section .table-container");
+      
         const changeSection = (sectionId) => {
           subjects.forEach((subject, index) => {
             const subjectElement = document.getElementById(subject);
             if (index === sectionId - 1) {
-            // 
               subjectElement.scrollIntoView({ behavior: "smooth" });
-                
-              
+      
+              // Create and display the table for the selected subject
+              tableContainer.innerHTML = createTable(index);
             } else {
               subjectElement.classList.remove("active");
             }
@@ -707,6 +756,7 @@ header .company-name {
         // This ensures that the initial section is active based on the slider's initial value
         changeSection(parseInt(sectionSlider.value));
       });
+      
       
       var coll = document.getElementsByClassName("collapsible");
 var i;
