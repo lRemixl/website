@@ -653,7 +653,7 @@ body {
     position: relative;
     display: block;
     width: calc(118% + 1.3px);
-    height: 260px;
+    height: 261px;
 }
 
 .wave .shape-fill {
