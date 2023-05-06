@@ -109,6 +109,13 @@
   left: 10px;
    color: #3cb371;
 }
+.ComputerScience-link {
+  top: 270px;
+  left: 1000px;
+  opacity: 0%;
+   color: #3cb371;
+}
+
 .table-link {
   top: 250px;
   left: 10px;
@@ -627,6 +634,8 @@ input[type="file"] {
      <a href="#" onclick="event.preventDefault(); scrollToSubject('physics')" class="navigation-link physics-link">Physics</a>
      <a href="#" onclick="event.preventDefault(); scrollToSubject('spanish')" class="navigation-link spanish-link">Spanish</a>
      <a href="#" onclick="event.preventDefault(); scrollToSubject('economics')" class="navigation-link economics-link">Economics</a>
+     <a href="#" onclick="event.preventDefault(); scrollToSubject('ComputerScience')" class="navigation-link ComputerScience-link">Comp Sci</a>
+
      <a href="#" onclick="window.location.href='tables.html'" class="navigation-link table-link">Table</a>
      
     <div class="container">
@@ -840,7 +849,7 @@ function scrollToSubject(subject) {
  // canvas.position();
 }
 
-const subjects = ["maths", "psychology", "physics", "spanish", "economics"];
+const subjects = ["maths", "psychology", "physics", "spanish", "economics","ComputerScience" ];
 const navLinks = document.getElementById("nav-links");
 
 subjects.forEach((subject, index) => {
